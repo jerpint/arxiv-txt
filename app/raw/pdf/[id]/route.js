@@ -1,4 +1,4 @@
-// app/raw/html/[id]/route.js
+// app/raw/pdf/[id]/route.js
 import { fetchArxivHtml, convertHtmlToText, ArxivError } from '@/app/lib/arxiv';
 
 export async function GET(request, { params }) {

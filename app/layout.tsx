@@ -30,6 +30,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <div className="flex-1 px-2 mx-2">
                 <Link href="/" className="text-xl font-bold">arXiv-txt.org</Link>
                 <span className="ml-4 text-sm opacity-70">LLM-friendly arXiv papers</span>
+                <a href="https://github.com/jerpint/arxiv-txt" className="ml-4 link inline-flex items-center gap-1" target="_blank" rel="noopener noreferrer">
+                  GitHub
+                  <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
               </div>
             </div>
             {/* Page content */}
