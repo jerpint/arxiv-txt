@@ -13,7 +13,7 @@
     "daisyui": "^4.12.23",
     "fast-xml-parser": "^5.0.6",
     "html-to-text": "^9.0.5",
-    "next": "15.5.7",
+    "next": "15.5.9",
     "prism-react-renderer": "^2.4.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
