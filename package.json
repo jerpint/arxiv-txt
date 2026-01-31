@@ -11,7 +11,7 @@
   "dependencies": {
     "@vercel/analytics": "^1.5.0",
     "daisyui": "^4.12.23",
-    "fast-xml-parser": "^5.0.6",
+    "fast-xml-parser": "^5.3.4",
     "html-to-text": "^9.0.5",
     "next": "15.5.9",
     "prism-react-renderer": "^2.4.1",
