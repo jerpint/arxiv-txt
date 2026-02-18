@@ -1,28 +1,27 @@
 import { Highlight, themes } from "prism-react-renderer";
 import Layout from '@/app/components/Layout';
-import ArxivInput from '@/app/components/ArxivInput';
+import CopyButton from '@/app/components/CopyButton';
 
 export default function Home() {
   const pythonCode = `import requests
 
 arxiv_url = "https://arxiv.org/abs/1706.03762"
-arxiv_txt_url = arxiv_url.replace("arxiv.org", "arxiv-txt.org/raw/")
+arxiv_txt_url = arxiv_url.replace("arxiv.org", "arxiv-txt.org")
 summary: str = requests.get(arxiv_txt_url).text
 print(summary)
 
 # Pass this to your favorite agent`;
 
   const bashCode = `# Save the raw text to a file
-curl -o paper.txt https://arxiv-txt.org/raw/abs/1706.03762
+curl -o paper.txt https://arxiv-txt.org/abs/1706.03762
 
 # or pipe directly to CLI apps:
 # This example uses the 'llm' library
 # https://github.com/simonw/llm
 
-curl -L https://arxiv-txt.org/raw/abs/1706.03762 | \\
+curl -L https://arxiv-txt.org/abs/1706.03762 | \\
 llm -s "Explain this paper like I'm 5"
 `;
-
 
   return (
     <div className="container mx-auto px-4 py-8 flex flex-col items-center">
@@ -38,46 +37,56 @@ llm -s "Explain this paper like I'm 5"
         </a>
       </p>
 
-      <ArxivInput />
-
-      <div className="card bg-base-100 w-full max-w-2xl shadow-xl my-8">
+      <div className="card bg-base-100 w-full max-w-2xl shadow-xl mb-6">
         <div className="card-body py-6">
-          <h1 className="text-2xl font-bold mb-3 text-center">
-            API Usage Guide
-          </h1>
+          <h2 className="card-title mb-2">How it works</h2>
+          <p className="mb-4">
+            Replace <code className="badge badge-ghost">arxiv.org</code> with
+            <code className="badge badge-ghost ml-2">arxiv-txt.org</code> in any arXiv URL.
+          </p>
 
-          <div className="space-y-3">
-            <p className="text-center mb-4">
-              arXiv-txt is designed to be API-friendly
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div>
-                <p className="mb-2">Fetch a text summary:</p>
-                <div className="bg-base-200 p-4 rounded-lg">
-                  <code className="badge badge-ghost p-3 w-full flex justify-center">arxiv-txt.org/raw/abs/[id]</code>
-                </div>
-              </div>
-
-              <div>
-                <p className="mb-2">Fetch the full paper content:</p>
-                <div className="bg-base-200 p-4 rounded-lg">
-                  <code className="badge badge-ghost p-3 w-full flex justify-center">arxiv-txt.org/raw/pdf/[id]</code>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <p className="mb-2">Fetch a text summary:</p>
+              <div className="bg-base-200 p-4 rounded-lg">
+                <code className="badge badge-ghost p-3 w-full flex justify-center">arxiv-txt.org/abs/[id]</code>
               </div>
             </div>
 
-            <div className="mt-6">
-              <div className="text-sm opacity-75 mb-2">Try it out:</div>
-              <div className="p-4 bg-base-300 rounded-lg hover:bg-base-200 transition-colors">
-                <a href="https://arxiv-txt.org/raw/abs/1706.03762" className="link link-primary block text-center">
-                  https://arxiv-txt.org/raw/abs/1706.03762
-                </a>
+            <div>
+              <p className="mb-2">Fetch the full paper content:</p>
+              <div className="bg-base-200 p-4 rounded-lg">
+                <code className="badge badge-ghost p-3 w-full flex justify-center">arxiv-txt.org/pdf/[id]</code>
               </div>
             </div>
           </div>
 
-          <div className="divider my-6"></div>
+          <div>
+            <div className="text-sm opacity-75 mb-2">Try it out:</div>
+            <div className="p-4 bg-base-300 rounded-lg hover:bg-base-200 transition-colors">
+              <a href="/abs/1706.03762" className="link link-primary block text-center">
+                https://arxiv-txt.org/abs/1706.03762
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="card bg-base-100 w-full max-w-2xl shadow-xl mb-6">
+        <div className="card-body py-6 flex-row items-center justify-between">
+          <div>
+            <p className="text-sm opacity-75">Send this to your agent so it knows how to fetch arXiv papers.</p>
+            <a href="/llms.txt" className="link link-primary font-mono">arxiv-txt.org/llms.txt</a>
+          </div>
+          <CopyButton text="Fetch https://arxiv-txt.org/llms.txt to learn how to use arxiv-txt.org for LLM-friendly arXiv papers." />
+        </div>
+      </div>
+
+      <div className="card bg-base-100 w-full max-w-2xl shadow-xl my-8">
+        <div className="card-body py-6">
+          <h2 className="text-2xl font-bold mb-3 text-center">
+            API Usage Guide
+          </h2>
 
           <div className="mb-6">
             <h3 id="python" className="text-xl font-semibold mb-3">Python</h3>
@@ -120,7 +129,7 @@ llm -s "Explain this paper like I'm 5"
           </div>
         </div>
       </div>
-    <Layout></Layout>
+      <Layout />
     </div>
   );
 }

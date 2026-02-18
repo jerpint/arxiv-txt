@@ -1,0 +1,30 @@
+# arxiv-txt.org
+
+> LLM-friendly plain text versions of arXiv papers.
+
+## Usage
+
+Replace `arxiv.org` with `arxiv-txt.org` in any arXiv URL.
+
+## Endpoints
+
+- `arxiv-txt.org/abs/[id]` — Paper metadata: title, authors, abstract, categories, BibTeX
+- `arxiv-txt.org/pdf/[id]` — Full paper content as plain text (converted from HTML, with LaTeX math preserved)
+
+## Examples
+
+Fetch a paper summary:
+```
+curl https://arxiv-txt.org/abs/1706.03762
+```
+
+Fetch the full paper:
+```
+curl https://arxiv-txt.org/pdf/1706.03762
+```
+
+## Notes
+
+- The `[id]` is the arXiv paper ID (e.g. `1706.03762`, `math/0211159`)
+- Responses are plain text with UTF-8 encoding
+- Responses are cached for 24 hours
