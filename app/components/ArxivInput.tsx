@@ -4,14 +4,12 @@ import { useState } from 'react';
 
 export default function ArxivInput() {
   const [arxivId, setArxivId] = useState('');
-  const [result, setResult] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     // Validate input (basic validation)
     if (!arxivId.trim()) {
-      setResult('Please enter an arXiv ID');
       return;
     }
 
@@ -76,22 +74,6 @@ export default function ArxivInput() {
             </a>
           </div>
         </form>
-
-        {result && (
-          <div className="mt-4 p-4 bg-base-200 rounded-lg">
-            <p>{result}</p>
-            {result.startsWith('Generated URL:') && (
-              <a
-                href={result.split(': ')[1]}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-sm btn-outline mt-2"
-              >
-                Open URL
-              </a>
-            )}
-          </div>
-        )}
       </div>
     </div>
   );

@@ -6,8 +6,6 @@ export function usePaperContent(id) {
   const [paperContent, setPaperContent] = useState({ text: '', error: null });
 
   useEffect(() => {
-    console.log('0. Starting fetch for ID:', id);
-
     async function fetchPaper() {
       setLoading(true);
       setError(null);
@@ -27,7 +25,6 @@ export function usePaperContent(id) {
 
         const content = await response.text();
 
-        console.log('Fetched content:', content);
         setPaperContent({ text: content, error: null });
       } catch (err) {
         console.error('Error loading paper content:', err);

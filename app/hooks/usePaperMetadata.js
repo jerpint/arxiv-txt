@@ -22,7 +22,6 @@ export function usePaperMetadata(id) {
 
         const content = await response.text();
 
-        console.log('Fetched content:', content);
         setPlainTextMetadata(content);
         // Parse the plain text content to extract structured data
         const sections = content.split('\n\n');
