@@ -2,6 +2,7 @@
  * Helper functions for working with the arXiv API
  */
 import { htmlToText } from 'html-to-text';
+import { decodeHTML } from 'entities';
 
 // arXiv API base URL
 const ARXIV_API_BASE = 'http://export.arxiv.org/api/query';
@@ -74,24 +75,29 @@ export async function fetchArxivHtml(paperId) {
 
 export function convertHtmlToText(html) {
   // First, extract all math nodes and their LaTeX content
-  const mathRegex = /<math[^>]*>([\s\S]*?)<\/math>/g;
+  const mathRegex = /<math\b[^>]*>([\s\S]*?)<\/math>/gi;
+  // Avoid consuming literal placeholder-like text from the paper.
+  let prefix = '__ARXIV_MATH_';
+  while (html.includes(prefix)) prefix = '_' + prefix;
   const latexMap = new Map();
 
   html = html.replace(mathRegex, (match, content) => {
     // Extract LaTeX annotation
-    const texMatch = content.match(/<annotation encoding="application\/x-tex">([\s\S]*?)<\/annotation>/);
+    const texMatch = content.match(/<annotation\b[^>]*\bencoding=['"]application\/x-tex['"][^>]*>([\s\S]*?)<\/annotation>/i);
     if (texMatch) {
-      const isDisplay = match.includes('display="block"');
-      const tex = texMatch[1].trim();
-      const placeholder = `__MATH_${latexMap.size}__`;
+      const isDisplay = /\bdisplay=['"]block['"]/i.test(match);
+      const tex = decodeHTML(texMatch[1]).trim();
+      const placeholder = `${prefix}${latexMap.size}__`;
       latexMap.set(placeholder, isDisplay ? `\n\n$$${tex}$$\n\n` : `$${tex}$`);
       return placeholder;
     }
     // Fallback to alttext
     const altMatch = match.match(/alttext="([^"]*)"/);
     if (altMatch) {
-      const placeholder = `__MATH_${latexMap.size}__`;
-      latexMap.set(placeholder, `$${altMatch[1]}$`);
+      const placeholder = `${prefix}${latexMap.size}__`;
+      const tex = decodeHTML(altMatch[1]).trim();
+      const isDisplay = /\bdisplay=['"]block['"]/i.test(match);
+      latexMap.set(placeholder, isDisplay ? `\n\n$$${tex}$$\n\n` : `$${tex}$`);
       return placeholder;
     }
     return match;
@@ -100,14 +106,22 @@ export function convertHtmlToText(html) {
   const options = {
     wordwrap: false,
     preserveNewlines: true,
-    singleNewLineParagraphs: true,
-    selectors: [
-      {
-        selector: 'p',
-        format: 'block',
-        transform: (content) => `${content}\n\n`
-      }
-    ]
+    baseElements: {
+      selectors: ['article.ltx_document'],
+      returnDomByDefault: true,
+    },
+    formatters: {
+      markdownHeading(elem, walk, builder) {
+        builder.openBlock({ leadingLineBreaks: 2 });
+        builder.addInline('#'.repeat(Number(elem.name.slice(1))) + ' ');
+        walk(elem.children, builder);
+        builder.closeBlock({ trailingLineBreaks: 2 });
+      },
+    },
+    selectors: [1, 2, 3, 4, 5, 6].map(level => ({
+      selector: `h${level}`,
+      format: 'markdownHeading',
+    })),
   };
 
   try {
@@ -115,13 +129,12 @@ export function convertHtmlToText(html) {
 
     // Replace math placeholders with LaTeX
     latexMap.forEach((latex, placeholder) => {
-      text = text.replace(placeholder, latex);
+      text = text.replace(placeholder, () => latex);
     });
 
     return text
       .replace(/\n{3,}/g, '\n\n')
-      .replace(/\s+$/gm, '')
-      .replace(/([^.])\n\n([^\n])/g, '$1 $2')
+      .replace(/[ \t]+$/gm, '')
       .replace(/\s*\[\s*(\d+(?:,\s*\d+)*)\s*\]/g, ' [$1]')
       .trim();
   } catch (error) {
